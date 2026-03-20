@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DGM / AGM / MM Incentive Calculator 2025–26</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; background: #f5f5f3; color: #1a1a1a; min-height: 100vh; padding: 2rem 1rem; }
+  .page { max-width: 680px; margin: 0 auto; }
+  header { margin-bottom: 1.5rem; }
+  header h1 { font-size: 22px; font-weight: 500; }
+  header p { font-size: 13px; color: #666; margin-top: 4px; }
+  .section { background: #fff; border: 0.5px solid #ddd; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+  .section-title { font-size: 11px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-size: 13px; color: #555; margin-bottom: 4px; }
+  .field input, .field select { width: 100%; height: 36px; padding: 0 10px; border: 0.5px solid #ccc; border-radius: 8px; background: #fafafa; color: #1a1a1a; font-size: 14px; }
+  .field input:focus, .field select:focus { outline: none; box-shadow: 0 0 0 2px rgba(55,138,221,0.25); border-color: #378add; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1rem; }
+  .metric { background: #f5f5f3; border-radius: 8px; padding: 12px; }
+  .metric .mlabel { font-size: 11px; color: #777; margin-bottom: 4px; }
+  .metric .mval { font-size: 18px; font-weight: 500; }
+  .result-card { border-radius: 12px; padding: 1.25rem; border: 0.5px solid #ddd; margin-bottom: 1rem; }
+  .result-card.eligible { background: #EAF3DE; border-color: #639922; }
+  .result-card.ineligible { background: #FCEBEB; border-color: #A32D2D; }
+  .result-card .rtitle { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+  .result-card.eligible .rtitle { color: #3B6D11; }
+  .result-card.ineligible .rtitle { color: #791F1F; }
+  .result-card .ramount { font-size: 30px; font-weight: 500; }
+  .result-card.eligible .ramount { color: #3B6D11; }
+  .result-card.ineligible .ramount { color: #A32D2D; }
+  .breakdown { font-size: 12px; margin-top: 10px; }
+  .breakdown.eligible { color: #3B6D11; }
+  .breakdown.ineligible { color: #791F1F; }
+  .row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 0.5px solid rgba(0,0,0,0.07); }
+  .row:last-child { border-bottom: none; font-weight: 500; }
+  .warn { font-size: 12px; color: #854F0B; background: #FAEEDA; border-radius: 8px; padding: 8px 12px; margin-top: 8px; }
+  .tag { display: inline-block; font-size: 11px; padding: 3px 9px; border-radius: 8px; margin-right: 4px; margin-top: 5px; }
+  .tag.pass { background: #EAF3DE; color: #3B6D11; }
+  .tag.fail { background: #FCEBEB; color: #A32D2D; }
+  .footer-note { font-size: 11px; color: #999; margin-top: 6px; }
+  @media (max-width: 480px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .metrics { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1>Incentive Calculator — DGM / AGM / MM</h1>
+    <p>FY 2025–26 &nbsp;|&nbsp; April 2025 – March 2026</p>
+  </header>
+
+  <div class="section">
+    <div class="section-title">Basic details</div>
+    <div class="grid2">
+      <div class="field">
+        <label>Designation</label>
+        <select id="desig">
+          <option value="MM">Marketing Manager (MM)</option>
+          <option value="AGM">AGM – Marketing</option>
+          <option value="DGM">DGM – Marketing</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Date of joining</label>
+        <input type="date" id="doj" value="2025-04-01" />
+      </div>
+    </div>
+    <div class="field">
+      <label>Is employee on payroll at time of disbursement?</label>
+      <select id="payroll">
+        <option value="yes">Yes</option>
+        <option value="no">No</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Long leave taken (months, 0 if none)</label>
+      <input type="number" id="leave" value="0" min="0" max="12" step="0.5" />
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Sales achievement</div>
+    <div class="grid2">
+      <div class="field">
+        <label>Full team portfolio achievement (%)</label>
+        <input type="number" id="portfolioAch" value="100" min="0" max="300" />
+      </div>
+      <div class="field">
+        <label>P1 or P2 brand achievement (%)</label>
+        <input type="number" id="p1p2Ach" value="101" min="0" max="300" />
+      </div>
+    </div>
+    <div class="field">
+      <label>Other brands total achievement (%)</label>
+      <input type="number" id="otherAch" value="90" min="0" max="300" />
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label>Total FY net sales (₹ Crore)</label>
+        <input type="number" id="netSales" value="100" min="0" step="0.01" />
+      </div>
+      <div class="field">
+        <label>Discounted / HRS sales (₹ Crore)</label>
+        <input type="number" id="hrsSales" value="5" min="0" step="0.01" />
+      </div>
+    </div>
+    <div class="field">
+      <label>Goods return (₹ Crore)</label>
+      <input type="number" id="goodsReturn" value="0" min="0" step="0.01" />
+    </div>
+  </div>
+
+  <div class="metrics">
+    <div class="metric"><div class="mlabel">Effective net sales (after returns)</div><div class="mval" id="m-eff">—</div></div>
+    <div class="metric"><div class="mlabel">HRS % of net sales</div><div class="mval" id="m-hrs">—</div></div>
+    <div class="metric"><div class="mlabel">Incentive payout %</div><div class="mval" id="m-pay">—</div></div>
+  </div>
+
+  <div id="result-box"></div>
+</div>
+
+<script>
+function getBaseIncentive(salesCr) {
+  if (salesCr > 150) return 225000;
+  if (salesCr > 100) return 200000;
+  if (salesCr > 50)  return 150000;
+  if (salesCr > 25)  return 125000;
+  return 100000;
+}
+function getHRSPct(hrsPct) {
+  if (hrsPct > 69) return 60;
+  if (hrsPct > 49) return 70;
+  if (hrsPct > 29) return 80;
+  if (hrsPct > 10) return 90;
+  return 100;
+}
+function getHRSBand(hrsPct) {
+  if (hrsPct > 69) return 'A';
+  if (hrsPct > 49) return 'B';
+  if (hrsPct > 29) return 'C';
+  if (hrsPct > 10) return 'D';
+  return 'E';
+}
+function fmt(n) {
+  return '₹' + Math.round(n).toLocaleString('en-IN');
+}
+function calc() {
+  const doj = new Date(document.getElementById('doj').value);
+  const cutoff = new Date('2025-05-02');
+  const joinedOnTime = doj <= cutoff;
+  const payroll = document.getElementById('payroll').value === 'yes';
+  const leaveMonths = parseFloat(document.getElementById('leave').value) || 0;
+  const portfolioAch = parseFloat(document.getElementById('portfolioAch').value) || 0;
+  const p1p2Ach = parseFloat(document.getElementById('p1p2Ach').value) || 0;
+  const otherAch = parseFloat(document.getElementById('otherAch').value) || 0;
+  const netSales = parseFloat(document.getElementById('netSales').value) || 0;
+  const hrsSales = parseFloat(document.getElementById('hrsSales').value) || 0;
+  const goodsReturn = parseFloat(document.getElementById('goodsReturn').value) || 0;
+
+  const effectiveSales = netSales - (goodsReturn * 1.5);
+  const hrsPct = netSales > 0 ? (hrsSales / netSales) * 100 : 0;
+  const hrsBand = getHRSBand(hrsPct);
+  const payPct = getHRSPct(hrsPct);
+
+  document.getElementById('m-eff').textContent = effectiveSales.toFixed(2) + ' Cr';
+  document.getElementById('m-hrs').textContent = hrsPct.toFixed(1) + '% (Band ' + hrsBand + ')';
+  document.getElementById('m-pay').textContent = payPct + '%';
+
+  const reasons = [];
+  if (!joinedOnTime) reasons.push('Joined after May 2, 2025 → not eligible');
+  if (!payroll) reasons.push('Not on payroll at disbursement → not eligible');
+  if (portfolioAch < 100) reasons.push('Portfolio achievement < 100% (' + portfolioAch + '%)');
+  if (p1p2Ach <= 100) reasons.push('P1/P2 achievement must be > 100% (currently ' + p1p2Ach + '%)');
+  if (otherAch < 90) reasons.push('Other brands achievement < 90% (' + otherAch + '%)');
+
+  const checks = [
+    { label: 'Joined on/before May 2, 2025', pass: joinedOnTime },
+    { label: 'On payroll at disbursement', pass: payroll },
+    { label: 'Portfolio ≥ 100%', pass: portfolioAch >= 100 },
+    { label: 'P1/P2 > 100%', pass: p1p2Ach > 100 },
+    { label: 'Other brands ≥ 90%', pass: otherAch >= 90 },
+  ];
+
+  const eligible = reasons.length === 0;
+  const baseIncentive = getBaseIncentive(effectiveSales);
+  let finalIncentive = baseIncentive * (payPct / 100);
+
+  let proRataNote = '';
+  if (leaveMonths > 2) {
+    const workedMonths = Math.max(0, 12 - leaveMonths);
+    finalIncentive = finalIncentive * (workedMonths / 12);
+    proRataNote = 'Pro-rata applied: ' + workedMonths.toFixed(1) + '/12 months worked';
+  }
+
+  let tagsHtml = checks.map(c => `<span class="tag ${c.pass ? 'pass' : 'fail'}">${c.pass ? '✓' : '✗'} ${c.label}</span>`).join('');
+
+  let html = '';
+  if (!eligible) {
+    html = `<div class="result-card ineligible">
+      <div class="rtitle">Not eligible for incentive</div>
+      <div class="ramount">₹0</div>
+      <div class="breakdown ineligible" style="margin-top:8px;">${reasons.map(r => '• ' + r).join('<br>')}</div>
+    </div><div style="margin-top:8px;">${tagsHtml}</div>`;
+  } else {
+    html = `<div class="result-card eligible">
+      <div class="rtitle">Final incentive payout</div>
+      <div class="ramount">${fmt(finalIncentive)}</div>
+      <div class="breakdown eligible">
+        <div class="row"><span>Base incentive (eff. sales ${effectiveSales.toFixed(2)} Cr)</span><span>${fmt(baseIncentive)}</span></div>
+        <div class="row"><span>HRS band ${hrsBand} (${hrsPct.toFixed(1)}% discounted) → ${payPct}% payout</span><span></span></div>
+        ${proRataNote ? `<div class="row"><span>${proRataNote}</span><span></span></div>` : ''}
+        <div class="row"><span>Final amount (before tax)</span><span>${fmt(finalIncentive)}</span></div>
+      </div>
+      ${leaveMonths > 0 && leaveMonths <= 2 ? '<div class="warn">Leave ≤ 2 months — no pro-rata applied. Full incentive paid.</div>' : ''}
+      ${leaveMonths > 2 ? '<div class="warn">Long leave > 2 months — pro-rata applied.</div>' : ''}
+      <div style="margin-top:10px;">${tagsHtml}</div>
+    </div>
+    <p class="footer-note">Tax deductible as per IT law. Management reserves right to amend/cancel. Internal targets apply. Goods return deducted at 150%.</p>`;
+  }
+
+  document.getElementById('result-box').innerHTML = html;
+}
+
+document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', calc));
+calc();
+</script>
+</body>
+</html>
